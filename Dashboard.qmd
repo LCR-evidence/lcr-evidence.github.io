@@ -1,5 +1,8 @@
 ---
 title: "Quarto document with python and R"
+execute: 
+  echo: true
+  warning: false
 output:
   quarto::quarto_document:
     kernel: python
