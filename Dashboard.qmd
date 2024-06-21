@@ -16,6 +16,8 @@ This document is an example of how I can use python and R within the same quarto
 library(reticulate)
 use_python("C:/ProgramData/anaconda3")
 library(tidyverse)
+library(plotly)
+library(htmlwidgets)
 ```
 
 ## Python code chunk
@@ -24,19 +26,21 @@ library(tidyverse)
 import pandas as pd
 
 # Creating business counts dataframe
-df = pd.read_csv('https://www.nomisweb.co.uk/api/v01/dataset/NM_141_1.data.csv?geography=1853882369...1853882372,1853882374...1853882377,1853882380...1853882382&industry=37748736&employment_sizeband=0&legal_status=0&measures=20100')
-df = df[['DATE', 'GEOGRAPHY_CODE', 'GEOGRAPHY_NAME', 'OBS_VALUE']]
-df = df.rename(columns = {'DATE' : 'Year', 'GEOGRAPHY_CODE' : 'Code', 'GEOGRAPHY_NAME' : 'Area', 'OBS_VALUE': 'Number'})
-df_max = df[df['Year'] == df['Year'].max()]
+df = pd.read_csv('https://www.nomisweb.co.uk/api/v01/dataset/NM_141_1.data.csv?geography=1853882369...1853882372,1853882374...1853882377,1853882380...1853882382&date=latest&industry=150994945...150994965&employment_sizeband=0&legal_status=0&measures=20100')
+df = df[['GEOGRAPHY_CODE', 'GEOGRAPHY_NAME', 'INDUSTRY_NAME', 'INDUSTRY_CODE', 'OBS_VALUE']]
+df = df.rename(columns = {'GEOGRAPHY_CODE' : 'Code', 'GEOGRAPHY_NAME' : 'Area', 'INDUSTRY_NAME' : 'Sector', 'INDUSTRY_CODE' : 'Sector_code', 'OBS_VALUE': 'Number'})
+
 ```
 
 ## R code chunk
 
 ```{r}
-r_df = py$df_max
+r_df = py$df
 
-ggplot(data = r_df, aes(y = Area, x = Number)) + 
-  geom_col(fill = "purple")
+p <- ggplot(data = r_df, aes(y = Area, x = Number, fill = Sector_code)) + 
+  geom_col()
+
+ggplotly(p)
 ```
 
 
